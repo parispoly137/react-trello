@@ -1,12 +1,8 @@
-import {
-  DragDropContext,
-  Droppable,
-  Draggable,
-  DropResult,
-} from "react-beautiful-dnd";
+import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
 import styled from "styled-components";
 import { useRecoilState } from "recoil";
 import { toDoState } from "./atoms";
+import DraggableCard from "./components/DraggableCard";
 
 const Wrapper = styled.section`
   display: flex;
@@ -32,13 +28,6 @@ const Board = styled.ul`
   min-height: 200px;
 `;
 
-const Card = styled.div`
-  border-radius: 5px;
-  margin-bottom: 5px;
-  padding: 10px 10px;
-  background-color: ${(props) => props.theme.cardColor};
-`;
-
 function App() {
   const [toDos, setToDos] = useRecoilState(toDoState);
 
@@ -50,7 +39,6 @@ function App() {
       const copyToDos = [...prevToDos]; // for non-mutation
       // Delete item on source.index
       copyToDos.splice(source.index, 1);
-
       // Put back the item on the destination.index
       copyToDos.splice(destination!.index, 0, draggableId);
 
@@ -68,20 +56,8 @@ function App() {
             {(provided) => (
               <Board ref={provided.innerRef} {...provided.droppableProps}>
                 {toDos.map((todo, index) => (
-                  // Draggable ~ draggableId, index 필수
-                  <Draggable draggableId={todo} index={index} key={todo}>
-                    {/* Draggable에는 제공되는 props 존재-> children에 설정 */}
-                    {(provided) => (
-                      <Card
-                        ref={provided.innerRef}
-                        // 아래 2개의 props가 모두 있어야 요소를 컨트롤할 수 있다.
-                        {...provided.draggableProps} // controls the movement of the draggable
-                        {...provided.dragHandleProps} // drag handle
-                      >
-                        {todo}
-                      </Card>
-                    )}
-                  </Draggable>
+                  // 컴포넌트 분리 및 props 전달
+                  <DraggableCard key={todo} todo={todo} index={index} />
                 ))}
                 {/* drag할 때, droppable의 영역이 변하지 않게 설정 */}
                 {provided.placeholder}
