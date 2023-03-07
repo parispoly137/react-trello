@@ -1,5 +1,12 @@
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+  DropResult,
+} from "react-beautiful-dnd";
 import styled from "styled-components";
+import { useRecoilState } from "recoil";
+import { toDoState } from "./atoms";
 
 const Wrapper = styled.section`
   display: flex;
@@ -32,12 +39,24 @@ const Card = styled.div`
   background-color: ${(props) => props.theme.cardColor};
 `;
 
-// test array
-const toDos = ["a", "b", "c", "d", "e", "f", "g"];
-
 function App() {
+  const [toDos, setToDos] = useRecoilState(toDoState);
+
   // drag가 끝났을 때 실행할 함수
-  const onDragEnd = () => {};
+  const onDragEnd = ({ draggableId, destination, source }: DropResult) => {
+    if (!destination) return;
+
+    setToDos((prevToDos) => {
+      const copyToDos = [...prevToDos]; // for non-mutation
+      // Delete item on source.index
+      copyToDos.splice(source.index, 1);
+
+      // Put back the item on the destination.index
+      copyToDos.splice(destination!.index, 0, draggableId);
+
+      return copyToDos;
+    });
+  };
   return (
     // DragDropContext ~ onDragEnd 필수
     <DragDropContext onDragEnd={onDragEnd}>
@@ -50,7 +69,7 @@ function App() {
               <Board ref={provided.innerRef} {...provided.droppableProps}>
                 {toDos.map((todo, index) => (
                   // Draggable ~ draggableId, index 필수
-                  <Draggable draggableId={todo} index={index} key={index}>
+                  <Draggable draggableId={todo} index={index} key={todo}>
                     {/* Draggable에는 제공되는 props 존재-> children에 설정 */}
                     {(provided) => (
                       <Card

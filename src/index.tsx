@@ -1,5 +1,6 @@
 import ReactDOM from "react-dom/client";
 import App from "./App";
+import { RecoilRoot } from "recoil";
 import { createGlobalStyle, ThemeProvider } from "styled-components";
 import { myTheme } from "./theme";
 
@@ -76,9 +77,11 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <>
-    <ThemeProvider theme={myTheme}>
-      <GlobalStyle />
-      <App />
-    </ThemeProvider>
+    <RecoilRoot>
+      <ThemeProvider theme={myTheme}>
+        <GlobalStyle />
+        <App />
+      </ThemeProvider>
+    </RecoilRoot>
   </>
 );
