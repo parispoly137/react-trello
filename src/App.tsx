@@ -26,7 +26,7 @@ function App() {
 
   // ★ drag가 끝났을 때 실행할 함수
   const onDragEnd = (info: DropResult) => {
-    const { draggableId, destination, source } = info;
+    const { destination, source } = info;
 
     if (!destination) return;
 
@@ -34,8 +34,10 @@ function App() {
     if (destination.droppableId === source.droppableId) {
       setToDos((allBoards) => {
         const copyBoard = [...allBoards[source.droppableId]]; // 깊은 복사
+        // 삭제할 요소를 따로 object로 grab 한 뒤에 나중에 붙이는 방식
+        const taskObj = copyBoard[source.index];
         copyBoard.splice(source.index, 1); // 대상을 제거
-        copyBoard.splice(destination.index, 0, draggableId); // 대상을 원하는 위치에 추가
+        copyBoard.splice(destination.index, 0, taskObj); // 대상을 원하는 위치에 추가
 
         // 원래의 객체 형태로 return
         return {
@@ -49,11 +51,12 @@ function App() {
     if (destination.droppableId !== source.droppableId) {
       setToDos((allBoards) => {
         const sourceBoard = [...allBoards[source.droppableId]]; // 시작 보드 ~ 깊은 복사
+        const taskObj = sourceBoard[source.index];
         const destinationBoard = [...allBoards[destination.droppableId]]; // 목표 보드 ~ 깊은 복사
 
         // 시작 보드에서 제거 후, 목표 보드에 해당 요소 추가
         sourceBoard.splice(source.index, 1);
-        destinationBoard.splice(destination.index, 0, draggableId);
+        destinationBoard.splice(destination.index, 0, taskObj);
 
         // 객체 형태 리턴
         return {
