@@ -6,7 +6,6 @@ import Board from "./components/Board";
 
 const Wrapper = styled.section`
   display: flex;
-  max-width: 600px;
   width: 100vw;
   margin: 0 auto;
   justify-content: center;
@@ -70,6 +69,7 @@ function App() {
     <DragDropContext onDragEnd={onDragEnd}>
       <Wrapper>
         <Boards>
+          {/* key만을 이용하여 mapping ~ boardId */}
           {Object.keys(toDos).map((boardId) => (
             <Board key={boardId} boardId={boardId} toDos={toDos[boardId]} />
           ))}
